@@ -2,11 +2,9 @@ version: '3.9'
 
 services:
   backend:
-    container_name: compose-back-container
-    build:
-      context: backend
-      dockerfile: Dockerfile
-    image: compose-back-image
+    container_name: kpd-back-container
+    build: ./backend
+    image: kpd-back-image
     networks:
       - backend
     ports:
@@ -14,21 +12,21 @@ services:
     env_file:
       - backend/.env
     depends_on:
-      - postgres
+      - database
+    restart: on-failure 
 
   frontend:
-    container_name: compose-front-container
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-    image: compose-front-image
+    container_name: kpd-front-container
+    build: ./frontend
+    image: kpd-front-image
     networks:
       - frontend
     ports:
       - 8081:80
+    restart: on-failure 
 
-  postgres:
-    container_name: postgres
+  database:
+    container_name: database
     image: postgres
     networks:
       - backend
@@ -36,6 +34,7 @@ services:
       - postgres_data:/data/postgres
     env_file:
       - backend/.env
+    restart: on-failure 
 
 networks:
   backend:
